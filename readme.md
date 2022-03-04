@@ -107,3 +107,6 @@ How many job runs were skipped vs executed:
 ```
 SELECT count(*) from SyntheticCheck where monitorName='CronSynth' facet custom.jobsSkipped timeseries since 30 minutes ago
 ```
+
+## Availability
+You can *mostly* safely run the synhtetic script from multiple locations. Only one location will execute the jobs for a given time block, so if one location fails for some reason the other location will pick up the slack.
