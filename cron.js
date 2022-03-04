@@ -72,7 +72,8 @@ let assert = require('assert');
 let INSERT_KEY = $secure.CS_INSERT_KEY
 let QUERY_KEY = $secure.CS_QUERY_KEY
 
-const GRAPHQL_URL= REGION=="US" ? "https://api.newrelic.com/graphql" : "https://metric-api.eu.newrelic.com/graphql"
+const GRAPHQL_URL= REGION=="US" ? "https://api.newrelic.com/graphql" : "https://api.eu.newrelic.com/graphql"
+const METRIC_API_URL = REGION=="US" ? "https://metric-api.newrelic.com/metric/v1" : "https://metric-api.eu.newrelic.com/metric/v1"
 
 /*
 *  ========== SOME HELPER FUNCTIONS ===========================
@@ -151,7 +152,7 @@ const setAttribute = function(key,value) {
 */
 const sendDataToNewRelic = async (data) =>  {
     let request = {
-        url: "https://metric-api.newrelic.com/metric/v1",
+        url: METRIC_API_URL,
         method: 'POST',
         json: true,
         headers :{
