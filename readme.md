@@ -1,4 +1,4 @@
-# CronSynth - Cronlike jobs in New Relic Synthetics
+# CronSynth - Cron-like jobs in New Relic Synthetics
 This project provides a easy to use scaffold for running any sort of job (http check, api request, etc) within the New Relic synhtetic minon whilst controlling the times job runs using cron-like configuration. You can set jobs to run on a specified month, day of month, day of week, hour, min or any combination.
 
 A job is simply a javascript function that runs at configured times, what it does is left up to you. For instance you could use this to adjust alert thresholds at certain times of day or initiate a weekly report.
