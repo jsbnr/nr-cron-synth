@@ -1,11 +1,11 @@
 # CronSynth - Cron-like jobs in New Relic Synthetics
-This project provides a easy to use scaffold for running any sort of job (http check, api request, etc) within the New Relic synhtetic minon whilst controlling the times job runs using cron-like configuration. You can set jobs to run on a specified month, day of month, day of week, hour, min or any combination.
+This project provides a easy to use scaffold for running any sort of job (http check, api request, etc) within a New Relic synthetic minon whilst controlling the times job runs using cron-like configuration. You can set jobs to run on a specified month, day of month, day of week, hour, min or any combination.
 
 A job is simply a javascript function that runs at configured times, what it does is left up to you. For instance you could use this to adjust alert thresholds at certain times of day or initiate a weekly report.
 
 
 ## How it works
-The monitor needs to be run on a regular basis, say every 5 minutes. For the given time block (default is 10 minutes) the jobs satisfying the cron configuration are executed. The monitor records that the jobs have been executed for that time block. If the monitor runs again then jobs will only be executed if a previous execution for the same block was not detected. Or to put this another way, with a block size of 10 minutes jobs can at  execute at most every 10 minutes.
+The monitor needs to be run on a regular basis, say every 5 minutes. For the given time block (default is 10 minutes) the jobs satisfying the cron configuration are executed. The monitor records whether the jobs have been executed for that time block (you can query in NRQL too!). If the monitor runs again then jobs will only be executed if a previous execution for the same block was not detected. Or to put this another way, with a block size of 10 minutes jobs can at  execute at most every 10 minutes.
 
 
 ## Initial setup
@@ -16,9 +16,9 @@ The monitor uses NRDB as a data store to record successful exectutions. You will
 
 Next you must configure the following at the top of the script:
 
-- ACCOUNT_ID: The account ID relating to the keys above, where the data will be stored
-- REGION: Either `US` or `EU` depending on where your New Relic account is hosted
-- BLOCKSIZE: Size of a cron time block in minutes. Default is 10 (5, 15, 30 are other sensible alternatives). Important: you must set you monitor to run at least once within this period otherwise blocks might get missed. A block size less than 5 is not recommended.
+- **ACCOUNT_ID:** The account ID relating to the keys above, where the data will be stored
+- **REGION:** Either `US` or `EU` depending on where your New Relic account is hosted
+- **BLOCKSIZE:** Size of a cron time block in minutes. Default is 10 (5, 15, 30 are other sensible alternatives). Important: you must set you monitor to run at least once within this period otherwise blocks might get missed. A block size less than 5 is not recommended.
 
 **Optional:**
 If you are running more that one copy of this within an account you can ensure they do not conflict by providing a unique `NAMESPACE` value.
@@ -90,3 +90,20 @@ const JOBS = [
 
 ## Local Testing
 You can test locally by running `npm install` and then simply running `node cron.js`. Be sure to set your API keys in the local setup section where indicated.
+
+## Querying the data
+The monitor records some custom data against the SyntheticCheck event type:
+- jobsTriggered: the number of jobs executed
+- jobsSkipped:an inidcation if on this run the jobs were attempted to execute (we only run the jobs once per time block)
+
+The checks for job runs are also recorded as metrics which are what are used to determine if the current time block has run:
+
+How many jobs were executed:
+```
+SELECT max(custom.jobsTriggered) from SyntheticCheck where monitorName='CronSynth' timeseries since 30 minutes ago
+```
+
+How many job runs were skipped vs executed:
+```
+SELECT count(*) from SyntheticCheck where monitorName='CronSynth' facet custom.jobsSkipped timeseries since 30 minutes ago
+```
