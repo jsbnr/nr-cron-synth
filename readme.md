@@ -1,6 +1,6 @@
 # CronSynth - Cron-like jobs in New Relic Synthetics
 
-***Please note this repo has been moved, this one will no longer be updated and will shortly be archived. Find the new repo here: [https://github.com/newrelic-experimental/nr-cron-synth](https://github.com/newrelic-experimental/nr-cron-synth)***
+***Please note this repo has been moved. Find the new repo here: [https://github.com/newrelic-experimental/nr-cron-synth](https://github.com/newrelic-experimental/nr-cron-synth)***
 
 ---
 
